@@ -1,10 +1,10 @@
 import Image from "next/image";
-import CustomerTableDetails from "./customer-table-details";
+import CustomerTableDetails from "./customer/customer-table-details";
 import React from "react";
 
 const Contract = React.forwardRef<HTMLDivElement>((props, ref) => (
-    <div ref={ref} className="mx-auto h-[100vh] w-full max-w-3xl rounded-xl bg-muted/50" >
-        <div className="flex flex-col items-center justify-center p-4 bg-white">
+    <div  className="mx-auto h-[100vh] w-full max-w-3xl rounded-xl bg-muted/50" >
+        <div ref={ref} className="flex w-full flex-col items-center justify-center p-4 bg-white">
             <div className="flex flex-col w-full items-center justify-center gap-4">
 
                 {/* Header */}

@@ -27,7 +27,7 @@ export default function Home() {
 
 	const handlePrint = async () => {
 		if (!printRef.current) return;
-		const canvas = await html2canvas(printRef.current, { scale: 1 });
+		const canvas = await html2canvas(printRef.current, { scale: 2 });
 		const imgData = canvas.toDataURL("image/png");
 		const pdf = new jsPDF("p", "pt", "a4");
 		// A4 size: 595 x 842 pt
