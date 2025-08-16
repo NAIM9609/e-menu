@@ -4,6 +4,8 @@ export type MenuItem = {
   description?: string;
   price?: number | string;
   badges?: string[]; // e.g., ['veg', 'spicy', 'gluten-free']
+  baseIngredients?: string[];
+  extras?: { id: string; name: string; price: number }[];
 };
 
 export type MenuCategory = {
@@ -27,12 +29,21 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: "Aperol, Prosecco, Soda",
         price: 7,
         badges: ["gluten-free"],
+        baseIngredients: ["Aperol", "Prosecco", "Soda"],
+        extras: [
+          { id: "oliva", name: "Oliva", price: 0.5 },
+          { id: "fetta-arancia", name: "Fetta d'arancia extra", price: 0.5 },
+        ],
       },
       {
         id: "negroni",
         name: "Negroni",
         description: "Gin, Bitter, Vermouth Rosso",
         price: 9,
+        baseIngredients: ["Gin", "Bitter", "Vermouth Rosso"],
+        extras: [
+          { id: "twist-arancia", name: "Twist d'arancia", price: 0.5 },
+        ],
       },
     ],
   },
@@ -47,6 +58,12 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: "Pomodoro, fior di latte, basilico",
         price: 8,
         badges: ["vegetarian"],
+        baseIngredients: ["Pomodoro", "Fior di latte", "Basilico"],
+        extras: [
+          { id: "olive", name: "Olive", price: 1 },
+          { id: "acciughe", name: "Acciughe", price: 1.5 },
+          { id: "bufala", name: "Mozzarella di bufala", price: 2 },
+        ],
       },
       {
         id: "diavola",
@@ -54,6 +71,11 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: "Salame piccante, mozzarella",
         price: 9,
         badges: ["spicy"],
+        baseIngredients: ["Pomodoro", "Mozzarella", "Salame piccante"],
+        extras: [
+          { id: "jalapeno", name: "Jalapeño", price: 1 },
+          { id: "cipolla", name: "Cipolla", price: 0.5 },
+        ],
       },
     ],
   },

@@ -13,10 +13,13 @@ export default function MenuSection({ category }: { category: MenuCategory }) {
         {category.items.map((it) => (
           <MenuItemCard
             key={it.id}
+            id={it.id}
             name={it.name}
             description={it.description}
             price={it.price}
             badges={it.badges}
+            baseIngredients={it.baseIngredients}
+            extras={it.extras}
           />
         ))}
       </div>

@@ -5,6 +5,7 @@ import "./globals.css";
 import { PrimeReactProvider, FilterMatchMode } from 'primereact/api';
 import "primereact/resources/themes/soho-dark/theme.css";
 import "primeicons/primeicons.css";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-  <PrimeReactProvider value={value}>{children}</PrimeReactProvider>
+        <PrimeReactProvider value={value}>
+          <CartProvider>{children}</CartProvider>
+        </PrimeReactProvider>
       </body>
     </html>
   );

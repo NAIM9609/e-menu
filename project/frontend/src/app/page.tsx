@@ -13,7 +13,7 @@ export default function Home() {
           <MenuSection key={c.id} category={c} />
         ))}
       </main>
-      <ActionBar categories={MENU_CATEGORIES} />
+  <ActionBar />
     </div>
   );
 }
