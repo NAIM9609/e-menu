@@ -3,6 +3,9 @@ import { Button } from "primereact/button";
 import { useCart } from "@/context/CartContext";
 import { useEffect, useMemo, useState } from "react";
 import { Dialog } from "primereact/dialog";
+import { useIngredients } from "@/store/ingredientsStore";
+import { useBadges } from "@/store/badgesStore";
+import Image from "next/image";
 
 type Props = {
   id?: string;
@@ -16,6 +19,8 @@ type Props = {
 
 export default function MenuItemCard({ id, name, description, price, badges, baseIngredients, extras }: Props) {
   const { addItem } = useCart();
+  const { ingredients } = useIngredients();
+  const { badges: allBadges } = useBadges();
   const [pulse, setPulse] = useState(false);
   const [open, setOpen] = useState(false);
   const [removed, setRemoved] = useState<string[]>([]);
@@ -32,26 +37,41 @@ export default function MenuItemCard({ id, name, description, price, badges, bas
     return () => t && clearTimeout(t);
   }, [pulse]);
   const safeBase = baseIngredients ?? [];
+  const resolvedBase = useMemo(() =>
+    safeBase.map((key) => {
+      const found = ingredients.find((ing) => ing.id === key);
+      return { key, label: found ? found.name : key };
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(safeBase), ingredients]
+  );
   const safeExtras = extras ?? [];
 
   return (
     <>
     <div className="border border-neutral-800 rounded-lg p-3 flex items-start justify-between gap-3 bg-black/20">
-      <div className="flex-1 cursor-pointer" onClick={() => setOpen(true)}>
+      <div
+        className="flex-1 cursor-pointer"
+        onClick={() => {
+          const hasCustom = (resolvedBase.length > 0) || (safeExtras.length > 0);
+          if (hasCustom) setOpen(true);
+        }}
+      >
         <div className="font-semibold text-base text-white">{name}</div>
         {description && (
           <div className="text-sm text-neutral-300 mt-1 leading-snug">{description}</div>
         )}
         {badges && badges.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-2">
-            {badges.map((b) => (
-              <span
-                key={b}
-                className="px-2 py-0.5 text-xs rounded-full bg-neutral-700 text-white capitalize"
-              >
-                {b}
-              </span>
-            ))}
+            {badges.map((bid) => {
+              const meta = allBadges.find((x) => x.id === bid) || allBadges.find((x) => x.name.toLowerCase() === String(bid).toLowerCase());
+              return (
+                <span key={bid} className="px-2 py-0.5 text-xs rounded-full bg-neutral-700 text-white capitalize inline-flex items-center gap-1">
+                  {meta?.icon && <Image src={meta.icon} alt="" width={12} height={12} className="opacity-80" />}
+                  {meta?.name || bid}
+                </span>
+              );
+            })}
           </div>
         )}
       </div>
@@ -72,7 +92,7 @@ export default function MenuItemCard({ id, name, description, price, badges, bas
             setPulse(true);
           }}
         />
-        {(safeBase.length > 0 || safeExtras.length > 0) && (
+        {(resolvedBase.length > 0 || safeExtras.length > 0) && (
           <Button size="small" label="Personalizza" text onClick={() => setOpen(true)} />
         )}
         </div>
@@ -88,33 +108,36 @@ export default function MenuItemCard({ id, name, description, price, badges, bas
       onHide={() => setOpen(false)}
     >
       <div className="space-y-4">
-    {safeBase.length > 0 && (
+    {resolvedBase.length > 0 && (
           <div>
             <div className="font-medium mb-2">Ingredienti</div>
             <div className="flex flex-wrap gap-2">
-      {safeBase.map((ing) => {
-                const isRemoved = removed.includes(ing);
+      {resolvedBase.map(({ key, label }) => {
+                const isRemoved = removed.includes(key);
                 return (
                   <button
-                    key={ing}
+                    key={key}
                     className={`text-sm px-2 py-1 rounded border ${
                       isRemoved ? "border-red-400 text-red-300" : "border-neutral-600 text-neutral-200"
                     }`}
                     onClick={() => {
                       setRemoved((prev) =>
-                        prev.includes(ing) ? prev.filter((x) => x !== ing) : [...prev, ing]
+                        prev.includes(key) ? prev.filter((x) => x !== key) : [...prev, key]
                       );
                     }}
                   >
                     {isRemoved ? "Rimuovi: " : ""}
-                    {ing}
+                    {label}
                   </button>
                 );
               })}
             </div>
             {removed.length > 0 && (
               <div className="mt-2 text-xs text-neutral-400">
-                Rimossi: {removed.join(", ")}. Clicca per reintrodurre.
+                Rimossi: {removed.map((k) => {
+                  const f = ingredients.find((ing) => ing.id === k);
+                  return f ? f.name : k;
+                }).join(", ")}. Clicca per reintrodurre.
               </div>
             )}
           </div>

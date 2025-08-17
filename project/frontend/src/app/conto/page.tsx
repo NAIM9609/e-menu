@@ -3,12 +3,14 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "primereact/button";
 import { RadioButton } from "primereact/radiobutton";
 import { useState } from "react";
+import { useIngredients } from "@/store/ingredientsStore";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function ContoPage() {
   const { items, increment, decrement, removeItem, removeExtra, totalAmount } = useCart();
   const [payment, setPayment] = useState<"cassa" | "online">("cassa");
+  const { ingredients } = useIngredients();
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -37,7 +39,10 @@ export default function ContoPage() {
                       <div className="font-medium truncate">{it.name}</div>
                       <div className="text-sm text-neutral-400">€ {rowTotal.toFixed(2)} — {it.qty} x € {unit.toFixed(2)}</div>
                       {it.removedIngredients && it.removedIngredients.length > 0 && (
-                        <div className="text-xs text-red-300 mt-1">Senza: {it.removedIngredients.join(", ")}</div>
+                        <div className="text-xs text-red-300 mt-1">Senza: {it.removedIngredients.map((k) => {
+                          const f = ingredients.find((ing) => ing.id === k);
+                          return f ? f.name : k;
+                        }).join(", ")}</div>
                       )}
                       {it.extras && it.extras.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">

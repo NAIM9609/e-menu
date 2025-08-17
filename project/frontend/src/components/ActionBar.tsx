@@ -4,12 +4,13 @@ import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
-import { MENU_CATEGORIES } from "@/data/menu";
+import { useMenu } from "@/store/menuStore";
 
 export default function ActionBar() {
   const { totalAmount, totalQty } = useCart();
   const router = useRouter();
   const [openMenu, setOpenMenu] = useState(false);
+  const { categories } = useMenu();
 
   return (
     <>
@@ -31,9 +32,9 @@ export default function ActionBar() {
       </div>
     </div>
 
-    <Dialog header="Categorie" visible={openMenu} style={{ width: "28rem" }} modal onHide={() => setOpenMenu(false)}>
+  <Dialog header="Categorie" visible={openMenu} style={{ width: "28rem" }} modal onHide={() => setOpenMenu(false)}>
       <ul className="space-y-2">
-        {MENU_CATEGORIES.map((c) => (
+    {categories.map((c) => (
           <li key={c.id}>
             <a href={`#${c.id}`} onClick={() => setOpenMenu(false)} className="text-sm">
               {c.title}
