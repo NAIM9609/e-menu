@@ -1,5 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useMenu } from "@/store/menuStore";
+import { useIngredients } from "@/store/ingredientsStore";
 
 export type CartItem = {
   id: string; // line id (unique per customization)
@@ -58,6 +60,8 @@ function normalizeItems(data: unknown): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { categories } = useMenu();
+  const { ingredients } = useIngredients();
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
       if (typeof window === "undefined") return [];
@@ -88,6 +92,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const aEx = [...(a.extras ?? [])].sort((x, y) => x.id.localeCompare(y.id));
         return a.baseId === id && JSON.stringify(aRm) === JSON.stringify(rm) && JSON.stringify(aEx) === JSON.stringify(ex);
       };
+
+      // Enforce per-product stock if defined
+      const menuItem = (() => {
+        for (const c of categories) {
+          const found = c.items.find((it) => it.id === id);
+          if (found) return found;
+        }
+        return undefined;
+      })();
+      const currentQtyForBase = prev.filter((x) => x.baseId === id).reduce((s, it) => s + it.qty, 0);
+      if (typeof menuItem?.stock === "number" && menuItem.stock >= 0) {
+        if (currentQtyForBase + 1 > menuItem.stock) {
+          // deny add if exceeding product stock
+          return prev;
+        }
+      }
+
+      // Enforce per-ingredient stock if defined (base + extras)
+      const baseIds = (menuItem?.baseIngredients ?? []).filter(Boolean);
+      const exIds = (extras ?? []).map((e) => e.id);
+      const neededIds = new Set<string>([...baseIds, ...exIds]);
+      for (const ingId of neededIds) {
+        const ing = ingredients.find((i) => i.id === ingId);
+        if (typeof ing?.stock === "number" && ing.stock >= 0) {
+          const used = prev.reduce((sum, line) => {
+            // base usage
+            const usesBase = (menuItem?.baseIngredients ?? []).includes(ingId);
+            // extra usage (count only if present on that line)
+            const usesExtra = (line.extras ?? []).some((e) => e.id === ingId);
+            return sum + ((usesBase || usesExtra) ? line.qty : 0);
+          }, 0);
+          if (used + 1 > ing.stock) {
+            return prev; // deny add
+          }
+        }
+      }
 
       const matchIdx = prev.findIndex(isSameConfig);
       if (matchIdx >= 0) {
