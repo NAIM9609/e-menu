@@ -3,12 +3,13 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { PrimeReactProvider, FilterMatchMode } from 'primereact/api';
-import "primereact/resources/themes/soho-dark/theme.css";
+import "primereact/resources/themes/arya-orange/theme.css";
 import "primeicons/primeicons.css";
 import { CartProvider } from "@/context/CartContext";
 import { MenuProvider } from "@/store/menuStore";
 import { IngredientsProvider } from "@/store/ingredientsStore";
 import { BadgesProvider } from "@/store/badgesStore";
+import { I18nProvider } from "@/i18n/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,18 +40,20 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="it">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <PrimeReactProvider value={value}>
-          <IngredientsProvider>
-            <BadgesProvider>
-              <MenuProvider>
-                <CartProvider>{children}</CartProvider>
-              </MenuProvider>
-            </BadgesProvider>
-          </IngredientsProvider>
+          <I18nProvider>
+            <IngredientsProvider>
+              <BadgesProvider>
+                <MenuProvider>
+                  <CartProvider>{children}</CartProvider>
+                </MenuProvider>
+              </BadgesProvider>
+            </IngredientsProvider>
+          </I18nProvider>
         </PrimeReactProvider>
       </body>
     </html>

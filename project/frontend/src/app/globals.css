@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0b0f;
+  --foreground: #f5f5f7;
+  --accent: #ff7a18; /* warm orange */
+  --accent-2: #ffd54d; /* gold */
 }
 
 @theme inline {
@@ -12,19 +14,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* We keep a consistent dark, vibrant theme for a bar ambience */
 
 html {
     font-size: 14px;
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(1200px 800px at 10% -10%, rgba(255, 122, 24, 0.15), transparent),
+              radial-gradient(1000px 600px at 90% 10%, rgba(255, 213, 77, 0.12), transparent),
+              var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -38,5 +37,16 @@ body {
 }
 
 .btn-pulse {
-  animation: btn-pulse 400ms ease-in-out;
+  animation: btn-pulse 750ms ease-in-out;
+}
+
+/* Badge fly animation */
+@keyframes badge-fly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  50% { transform: translate(6px, -10px) scale(1.15); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+
+.badge-fly {
+  animation: badge-fly 900ms ease-in-out;
 }

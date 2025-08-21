@@ -7,6 +7,8 @@ export type Badge = {
   name: string;
   icon: string; // path or url
   description?: string;
+  bgColor?: string; // hex or rgba
+  textColor?: string; // hex
 };
 
 type BadgesContextType = {

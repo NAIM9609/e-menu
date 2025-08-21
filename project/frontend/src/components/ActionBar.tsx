@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useMenu } from "@/store/menuStore";
 
 export default function ActionBar() {
-  const { totalAmount, totalQty } = useCart();
+  const { totalAmount } = useCart();
   const router = useRouter();
   const [openMenu, setOpenMenu] = useState(false);
   const { categories } = useMenu();
@@ -20,13 +20,10 @@ export default function ActionBar() {
         <Button label="Cerca" icon="pi pi-search" text />
         <Button label="Contatti" icon="pi pi-info-circle" text />
         <Button label="Condividi" icon="pi pi-share-alt" text />
-        <div className="relative">
+  <div className="relative">
           <Button label="Conto" icon="pi pi-wallet" text onClick={() => router.push("/conto")} />
           <span className="absolute -top-1 -right-1 bg-emerald-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
             € {totalAmount.toFixed(2)}
-          </span>
-          <span className="absolute -bottom-1 right-0 translate-y-full mt-1 bg-neutral-800 border border-neutral-700 text-xs px-2 py-0.5 rounded">
-            {totalQty}
           </span>
         </div>
       </div>
